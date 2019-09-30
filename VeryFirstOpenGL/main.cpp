@@ -139,8 +139,10 @@ int main()
 	//delete the shader objects after being linked into the shader program since we no longer need them
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
-
+	//specify what part of our input data goes to which vertex attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	//enable the vertex attribute
+	glEnableVertexAttribArray(0);
 
 
 
