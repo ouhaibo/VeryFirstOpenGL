@@ -3,9 +3,9 @@
 #include <iostream>
 
 float vertices[] = {
-		-0.5f, -0.5f, 0.0f, // left  
-		 0.5f, -0.5f, 0.0f, // right 
-		 0.0f,  0.5f, 0.0f  // top   
+		-0.48f, -0.78f, 0.0f, // left  
+		 0.11f, -0.59f, 0.0f, // right 
+		-0.36f,  0.66f, 0.0f  // top   
 };
 
 const char* vertexShaderString = "#version 330 core\n"
@@ -90,7 +90,7 @@ int main()
 	glGenBuffers(1, &vertex_bufffer_obj);
 	//Binding an actual buffer object to the buffer object name(id)
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_bufffer_obj);
-	//Copies vertices data to our buffer object(GPU) 
+	//Copies vertices data to our buffer object(Upload data to GPU) 
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	//Create a shader object referenced by an ID
