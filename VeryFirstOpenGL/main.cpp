@@ -85,12 +85,12 @@ int main()
 	glfwSetFramebufferSizeCallback(window, framebuffer_sizechanged_callback);
 	glfwSetKeyCallback(window, keyevent_callback);
 
-	//Generating an unused buffer object name(id)
+	//Generate an unused buffer object name(id)
 	GLuint vertex_bufffer_obj;
 	glGenBuffers(1, &vertex_bufffer_obj);
-	//Binding an actual buffer object to the buffer object name(id)
+	//Bind an actual buffer object to the buffer object name(id)
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_bufffer_obj);
-	//Copies vertices data to our buffer object(Upload data to GPU) 
+	//Copy vertices data to our buffer object(Upload data to GPU) 
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	//Create a shader object referenced by an ID
