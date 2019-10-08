@@ -24,6 +24,7 @@ const char* fragmentShaderString = "#version 330 core\n"
 
 long(*innerFunc)(long, int);
 
+
 void framebuffer_sizechanged_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
@@ -88,6 +89,13 @@ int main()
 	//Generate an unused buffer object name(id)
 	GLuint vertex_bufffer_obj;
 	glGenBuffers(1, &vertex_bufffer_obj);
+
+	//Generate an unused vertex array object name(id)
+	GLuint vertex_array_obj;
+	glGenVertexArrays(1, &vertex_array_obj);
+	//Bind the Vertex Array Object first,then bind and set vertex buffer objects,and then configure vertex attributes
+	glBindVertexArray(vertex_array_obj);
+
 	//Bind an actual buffer object to the buffer object name(id)
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_bufffer_obj);
 	//Copy vertices data to our buffer object(Upload data to GPU) 
@@ -139,6 +147,7 @@ int main()
 	//Delete the shader objects after being linked into the shader program since we no longer need them
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
+
 	//Specify what part of our input data goes to which vertex attribute
 	glVertexAttribPointer(
 		0, //Index of the generic vertex attribute to be modified
@@ -147,8 +156,10 @@ int main()
 		GL_FALSE, //Specifies whether fixed-point data values should be normalized (GL_TRUE) or converted directly as fixed-point values (GL_FALSE) when they are accessed
 		3 * sizeof(float), //Byte offset between consecutive generic vertex attributes
 		(void*)0);//Offset of the first component of the first generic vertex attribute in the array in the data store of the buffer currently bound to the GL_ARRAY_BUFFER target
-	//Enable the vertex attribute
+	//Enable the vertex attribute(Vertex attributes are disabled by default)
 	glEnableVertexAttribArray(0);
+
+
 
 
 
