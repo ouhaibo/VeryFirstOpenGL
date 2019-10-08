@@ -3,9 +3,9 @@
 #include <iostream>
 
 float vertices[] = {
-		-0.48f, -0.78f, 0.0f, // left  
-		 0.11f, -0.59f, 0.0f, // right 
-		-0.36f,  0.66f, 0.0f  // top   
+		-0.89f, -0.88f, 0.0f, // left  
+		-0.41f, -0.48f, 0.0f, // right 
+		-0.66f,  0.66f, 0.0f  // top   
 };
 
 const char* vertexShaderString = "#version 330 core\n"
@@ -20,6 +20,32 @@ const char* fragmentShaderString = "#version 330 core\n"
 "void main()\n"
 "{\n"
 "color = vec4(0.85f, 1.0f, 0.12f, 1.0f);\n"
+"}\n";
+
+
+float rect_vertices[] = {
+	0.12f,  0.86f, 0.0f,
+	0.72f,  0.53f, 0.0f,
+	0.64f, -0.39f, 0.0f,
+	0.28f, -0.66f, 0.0f
+};
+
+unsigned int rect_indices[] = {
+	0,1,3,1,2,3
+};
+
+const char* rectVertexShaderString = "#version 330 core\n"
+"layout (location=0) in vec3 aPos;\n"
+"void main()\n"
+"{\n"
+"gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+"}\0";
+
+const char* rectFragmentShaderString = "#version 330 core\n"
+"out vec4 color;\n"
+"void main()\n"
+"{\n"
+"color = vec4(0.302f, 0.75f, 0.908f, 1.0f);\n"
 "}\n";
 
 long(*innerFunc)(long, int);
@@ -93,10 +119,10 @@ int main()
 	//Generate an unused vertex array object name(id)
 	GLuint vertex_array_obj;
 	glGenVertexArrays(1, &vertex_array_obj);
-	//Bind the Vertex Array Object first,then bind and set vertex buffer objects,and then configure vertex attributes
+	//Bind the actual Vertex Array Object with the name "vertex_array_obj" first,then bind and set vertex buffer objects,and then configure vertex attributes
 	glBindVertexArray(vertex_array_obj);
 
-	//Bind an actual buffer object to the buffer object name(id)
+	//Bind an actual Buffer Object to the buffer object name(id)
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_bufffer_obj);
 	//Copy vertices data to our buffer object(Upload data to GPU) 
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -142,8 +168,7 @@ int main()
 		std::cout << "Error in linking shader program:" << infoLog << std::endl;
 		return 0;
 	}
-	//Use the shader program object and linked shader objects to rendering call
-	glUseProgram(shader_program);
+
 	//Delete the shader objects after being linked into the shader program since we no longer need them
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
@@ -159,16 +184,51 @@ int main()
 	//Enable the vertex attribute(Vertex attributes are disabled by default)
 	glEnableVertexAttribArray(0);
 
+	//After setting the content of vertex buffer objects and storing the vertex attribute configurations and vertex buffer objects in vertex array object,we unbind them for later use
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 
 
 
+	GLuint rectVBOid, rectVAOid, rectEBOid;
+
+	glGenVertexArrays(1, &rectVAOid);
+	glBindVertexArray(rectVAOid);
+
+	glGenBuffers(1, &rectVBOid);
+	glGenBuffers(1, &rectEBOid);
 
 
+	glBindBuffer(GL_ARRAY_BUFFER, rectVBOid);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(rect_vertices), rect_vertices, GL_STATIC_DRAW);
 
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rectEBOid);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rect_indices), rect_indices, GL_STATIC_DRAW);
 
+	GLuint rectVertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(rectVertexShader, 1, &rectVertexShaderString, nullptr);
+	glCompileShader(rectVertexShader);
 
+	GLuint rectFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(rectFragmentShader, 1, &rectFragmentShaderString, nullptr);
+	glCompileShader(rectFragmentShader);
 
+	GLuint rectShaderProgram = glCreateProgram();
+	glAttachShader(rectShaderProgram, rectVertexShader);
+	glAttachShader(rectShaderProgram, rectFragmentShader);
+	glLinkProgram(rectShaderProgram);
 
+	glDeleteShader(rectVertexShader);
+	glDeleteShader(rectFragmentShader);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	/*glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 如果在unbind VAO之前unbind了GL_ELEMENT_ARRAY_BUFFER，将导致GL_ELEMENT_ARRAY_BUFFER未被设置（A VAO stores the glBindBuffer calls when the target is GL_ELEMENT_ARRAY_BUFFER.
+																																            This also means it stores its unbind calls so make sure you don’t unbind the element array buffer
+																																            before unbinding your VAO, otherwise it doesn’t have an EBO configured.）*/
+	glBindVertexArray(0);
 
 	//7.Start render loop
 	while (!glfwWindowShouldClose(window))
@@ -179,18 +239,36 @@ int main()
 		processInput(window);
 
 		//rendering(this is state-setting function,changes the state of the OpenGL context)
-		if (count % 12 == 0)
+		if (count % 13 <= 6)
 		{
 			glClearColor(0.2f, 0.5f, 0.75f, 0.31f);
 		}
 		else
 		{
-			glClearColor(0.9f, 0.12f, 0.45f, 0.77f);
+			glClearColor(0.9f, 0.02f, 0.415f, 0.77f);
 		}
 		
 		//specify which buffer to clear(here is color buffer)
 		//this is a state-using function,performs some operations based on the current state
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		//Use the shader program object and linked shader objects to rendering call
+		glUseProgram(shader_program);
+		//When drawing our objects,we bind the vertex array object again
+		glBindVertexArray(vertex_array_obj);//As we only have a single vertex array object, there's no need to bind it every time,but we'll do so to keep things a bit more organized
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		//Draw our triangle
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+
+		glUseProgram(rectShaderProgram);
+		glBindVertexArray(rectVAOid);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		//Indexed Drawing
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+
+		glBindVertexArray(0);
 
 		//check and call events
 		glfwPollEvents();
@@ -198,6 +276,13 @@ int main()
 		//swap front and back buffer
 		glfwSwapBuffers(window);
 	}
+
+	glDeleteBuffers(1, &vertex_bufffer_obj);
+	glDeleteVertexArrays(1, &vertex_array_obj);
+
+	glDeleteBuffers(1, &rectVBOid);
+	glDeleteBuffers(1, &rectEBOid);
+	glDeleteVertexArrays(1, &rectVAOid);
 
 	//8.Close and release things
 	glfwTerminate();
