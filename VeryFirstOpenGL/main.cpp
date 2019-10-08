@@ -85,19 +85,19 @@ int main()
 	glfwSetFramebufferSizeCallback(window, framebuffer_sizechanged_callback);
 	glfwSetKeyCallback(window, keyevent_callback);
 
-	//generating an unused buffer object name(id)
+	//Generating an unused buffer object name(id)
 	GLuint vertex_bufffer_obj;
 	glGenBuffers(1, &vertex_bufffer_obj);
-	//binding an actual buffer object to the buffer object name(id)
+	//Binding an actual buffer object to the buffer object name(id)
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_bufffer_obj);
-	//copies vertices data to our buffer object(GPU) 
+	//Copies vertices data to our buffer object(GPU) 
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	//create a shader object referenced by an ID
+	//Create a shader object referenced by an ID
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	//attach shader source code to the shader object
+	//Attach shader source code to the shader object
 	glShaderSource(vertexShader, 1, &vertexShaderString, nullptr);
-	//compile the shader
+	//Compile the shader
 	glCompileShader(vertexShader);
 	int success;
 	char infoLog[512];
@@ -120,12 +120,12 @@ int main()
 		return 0;
 	}
 
-	//create a shader program object referenced by returned ID
+	//Create a shader program object referenced by returned ID
 	GLuint shader_program = glCreateProgram();
-	//attach the compiled shader objects to the shader program
+	//Attach the compiled shader objects to the shader program
 	glAttachShader(shader_program, vertexShader);
 	glAttachShader(shader_program, fragmentShader);
-	//link shader objects and shader program object
+	//Link attached shader objects and shader program object
 	glLinkProgram(shader_program);
 	glGetProgramiv(shader_program, GL_LINK_STATUS, &success);
 	if (!success)
@@ -134,14 +134,20 @@ int main()
 		std::cout << "Error in linking shader program:" << infoLog << std::endl;
 		return 0;
 	}
-	//use the shader program object and linked shader objects to rendering call
+	//Use the shader program object and linked shader objects to rendering call
 	glUseProgram(shader_program);
-	//delete the shader objects after being linked into the shader program since we no longer need them
+	//Delete the shader objects after being linked into the shader program since we no longer need them
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
-	//specify what part of our input data goes to which vertex attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	//enable the vertex attribute
+	//Specify what part of our input data goes to which vertex attribute
+	glVertexAttribPointer(
+		0, //Index of the generic vertex attribute to be modified
+		3, // Number of components per generic vertex attribute
+		GL_FLOAT, //Data type of each component in the array
+		GL_FALSE, //Specifies whether fixed-point data values should be normalized (GL_TRUE) or converted directly as fixed-point values (GL_FALSE) when they are accessed
+		3 * sizeof(float), //Byte offset between consecutive generic vertex attributes
+		(void*)0);//Offset of the first component of the first generic vertex attribute in the array in the data store of the buffer currently bound to the GL_ARRAY_BUFFER target
+	//Enable the vertex attribute
 	glEnableVertexAttribArray(0);
 
 
