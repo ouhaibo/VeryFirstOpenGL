@@ -225,7 +225,7 @@ int main()
 	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	/*glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 如果在unbind VAO之前unbind了GL_ELEMENT_ARRAY_BUFFER，将导致GL_ELEMENT_ARRAY_BUFFER未被设置（A VAO stores the glBindBuffer calls when the target is GL_ELEMENT_ARRAY_BUFFER.
+	/* glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 如果在unbind VAO之前unbind了GL_ELEMENT_ARRAY_BUFFER，将导致GL_ELEMENT_ARRAY_BUFFER未被设置（A VAO stores the glBindBuffer calls when the target is GL_ELEMENT_ARRAY_BUFFER.
 																																            This also means it stores its unbind calls so make sure you don’t unbind the element array buffer
 																																            before unbinding your VAO, otherwise it doesn’t have an EBO configured.）*/
 	glBindVertexArray(0);
