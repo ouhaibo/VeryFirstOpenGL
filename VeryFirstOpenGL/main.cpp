@@ -9,17 +9,20 @@ float vertices[] = {
 };
 
 const char* vertexShaderString = "#version 330 core\n"
-"layout (location=0) in vec3 aPos;\n"
+"layout (location=0) in vec3 aPos;\n"//vertex attribute
+"out vec4 v_color;\n"
 "void main()\n"
 "{\n"
 "gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+"v_color=vec4(0.9903f,0.314f,0.618f,0.998f);\n"
 "}\0";
 
 const char* fragmentShaderString = "#version 330 core\n"
-"out vec4 color;\n"
+"in vec4 v_color;\n"//接收来自vertex shader的output
+"out vec4 FragColor;\n"
 "void main()\n"
 "{\n"
-"color = vec4(0.85f, 1.0f, 0.12f, 1.0f);\n"
+"FragColor=v_color;\n"
 "}\n";
 
 
@@ -35,7 +38,7 @@ unsigned int rect_indices[] = {
 };
 
 const char* rectVertexShaderString = "#version 330 core\n"
-"layout (location=0) in vec3 aPos;\n"
+"layout (location=0) in vec3 aPos;\n"//vertex attribute
 "void main()\n"
 "{\n"
 "gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
@@ -273,7 +276,7 @@ int main()
 		//check and call events
 		glfwPollEvents();
 
-		//swap front and back buffer
+		//Swap front and back buffer
 		glfwSwapBuffers(window);
 	}
 
