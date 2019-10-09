@@ -101,7 +101,7 @@ int main()
 	//3.Make the context of the window
 	glfwMakeContextCurrent(window);
 
-	//4.Initialize GLAD
+	//4.Initialize GLAD,load OpenGL functions
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "Failed to initialize GLAD!!!" << std::endl;
@@ -255,7 +255,7 @@ int main()
 		//this is a state-using function,performs some operations based on the current state
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		//Use the shader program object and linked shader objects to rendering call
+		//Install the program object as part of current rendering state.Use the shader program object and linked shader objects to rendering call
 		glUseProgram(shader_program);
 		//When drawing our objects,we bind the vertex array object again
 		glBindVertexArray(vertex_array_obj);//As we only have a single vertex array object, there's no need to bind it every time,but we'll do so to keep things a bit more organized
